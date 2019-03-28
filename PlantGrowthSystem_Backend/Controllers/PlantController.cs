@@ -106,11 +106,12 @@ namespace PlantGrowthSystem_Backend.Controllers
         // POST : Plant/UpdateMeasure
         // UpdateMeasure from enviroment control unit
         [HttpPost]
-        public ActionResult UpdateMeasure(string address, Measure measure)
+        //public ActionResult UpdateMeasure(string address, Measure measure)
+        public ActionResult UpdateMeasure(string id, Measure measure)
         {
             try
             {
-                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == address);
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
 
                 var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var builder = Builders<PlantModel>.Update;

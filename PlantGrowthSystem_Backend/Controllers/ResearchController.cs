@@ -189,7 +189,8 @@ namespace PlantGrowthSystem_Backend.Controllers
                         .Set("Status", "Running");
                     var result = researchCollection.UpdateOne(filter, update);
 
-                    return Content(JsonConvert.SerializeObject(plant));
+                    //return Content(JsonConvert.SerializeObject(plant));
+                    return Content(JsonConvert.SerializeObject("PlantId :"  + plant.Id));
                 }
                 else
                     return null;
