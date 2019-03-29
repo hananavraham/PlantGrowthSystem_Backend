@@ -194,6 +194,7 @@
     <Compile Include="Helpers\Intervals.cs" />
     <Compile Include="Helpers\Light.cs" />
     <Compile Include="Helpers\Measure.cs" />
+    <Compile Include="Helpers\Measures.cs" />
     <Compile Include="Helpers\Size.cs" />
     <Compile Include="Helpers\Temperature.cs" />
     <Compile Include="Models\GeneralPlantModel.cs" />

@@ -111,46 +111,47 @@ namespace PlantGrowthSystem_Backend.Controllers
         {
             try
             {
+                string date = DateTime.Now.ToString(("MM/dd/yyyy HH:mm"));
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
 
                 var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var builder = Builders<PlantModel>.Update;
                 var update = builder
-                    .Push("Temperature", measure.Temp[0])
-                    .Push("Light", measure.Light[0])
-                    .Push("Humidity", measure.Humidity[0]);
+                    .Push("Temperature", new Temperature(measure.Temp, date))
+                    .Push("Light", new Light(measure.Light, date))
+                    .Push("Humidity", new Humidity(measure.Humidity, date));
                 var result = plantCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject(measure));
             }
 
             catch
             {
-                return View();
+                return null;
             }
         }
 
         // GET : Plant/UpdateSize
         // UpdateSize from measurement control unit
         [HttpGet]
-        public ActionResult UpdateSize(string address, float size)
+        public ActionResult UpdateSize(string id, float size)
         {
             try
             {
-                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == address);
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
                 var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var update = Builders<PlantModel>.Update.Push("Size", new Size
                 {
                     _Size = size,
-                    Date = DateTime.Now.ToString()
+                    Date = DateTime.Now.ToString("MM/dd/yyyy HH:mm")
                 }
                     );
                 var result = plantCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject(size));
             }
 
             catch
             {
-                return View();
+                return null;
             }
         }
 
@@ -163,7 +164,7 @@ namespace PlantGrowthSystem_Backend.Controllers
             try
             {
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
-                var measure = new Measure();
+                var measure = new Measures();
                 measure.Temp = plant.Temperature.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
                 measure.Light = plant.Light.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
                 measure.Humidity = plant.Humidity.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
@@ -171,9 +172,9 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return Content(JsonConvert.SerializeObject(measure));
             }
 
-            catch
+            catch (Exception e)
             {
-                return View();
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
