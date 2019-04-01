@@ -2,9 +2,12 @@
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using PlantGrowthSystem_Backend.App_Start;
+using PlantGrowthSystem_Backend.Helpers;
 using PlantGrowthSystem_Backend.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -219,6 +222,35 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return null;
             }
 
+        }
+
+
+
+        /* need to check it!!!!!! */
+
+
+        // POST : Research/UpdateIntervalsToPlants
+        [HttpPost]
+        public ActionResult UpdateIntervalsToPlants(string researchId, HttpPostedFileBase file)
+        {
+            ReadExcelFile excel = new ReadExcelFile();
+
+            /* need to get the file from POST */
+            ListDictionary plantIntervals = excel.ParseExcel(file.FileName);
+
+            var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+
+            foreach (KeyValuePair<string, List<Intervals>> plantInterval in plantIntervals)
+            {
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantInterval.Key);
+                var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
+                var update = Builders<PlantModel>.Update
+
+                    .Set("Intervals", plant.Intervals);
+                var result = plantCollection.UpdateOne(filter, update);
+            }
+
+            return null;
         }
 
     }

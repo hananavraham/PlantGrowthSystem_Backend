@@ -7,6 +7,7 @@ namespace PlantGrowthSystem_Backend.Helpers
 {
     public class Intervals
     {
+        public string date { get; set; }
         public int min_Humidity { get; set; }
         public int max_Humidity { get; set; }
         public float min_Temperature { get; set; }
