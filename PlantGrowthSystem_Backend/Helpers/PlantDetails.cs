@@ -9,6 +9,6 @@ namespace PlantGrowthSystem_Backend.Helpers
     {
         public float Frequency_of_measurement { get; set; }
         public float Frequency_of_upload { get; set; }
-        public Intervals Interavl { get; set; }
+        public Intervals Control_plan { get; set; }
     }
 }

@@ -7,13 +7,13 @@ namespace PlantGrowthSystem_Backend.Helpers
 {
     public class Light
     {
-        public Light(float light, string date)
+        public Light(int light, string date)
         {
             this._Light = light;
             Date = date;
         }
 
-        public float _Light { get; set; }
+        public int _Light { get; set; }
         public string Date { get; set; }
     }
 }

@@ -68,12 +68,12 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 //research.Status = "Pending";
                 researchCollection.InsertOne(research);
-                return View();
+                return Content(JsonConvert.SerializeObject(research));
             }
 
-            catch
+            catch (Exception e)
             {
-                return View();
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
@@ -89,12 +89,12 @@ namespace PlantGrowthSystem_Backend.Controllers
                     .Set("End_date", research.End_date)
                     .Set("Owners", research.Owners);
                 var result = researchCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject(research));
             }
 
-            catch
+            catch (Exception e)
             {
-                return View();
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
@@ -110,7 +110,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var plantCollection = dBContext.database.GetCollection<ResearchModel>("Plant");
                 foreach (var plantId in research.Plants_id)
                     plantCollection.DeleteOne(x => x.Id == ObjectId.Parse(plantId));
-                return View();
+                return Content(JsonConvert.SerializeObject("Research deleted"));
             }
 
             catch
@@ -164,7 +164,7 @@ namespace PlantGrowthSystem_Backend.Controllers
 
                 // need to check the status and update the Env. + Measure controls  //
 
-                return View();
+                return Content(JsonConvert.SerializeObject(research));
             }
 
             catch
@@ -219,7 +219,7 @@ namespace PlantGrowthSystem_Backend.Controllers
 
             catch (Exception e)
             {
-                return null;
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
 
         }

@@ -69,12 +69,12 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 plant.ResearchId = researchId;
                 plantCollection.InsertOne(plant);
-                return View();
+                return Content(JsonConvert.SerializeObject("ok"));
             }
 
             catch
             {
-                return View();
+                return null;
             }
         }
 
@@ -92,12 +92,12 @@ namespace PlantGrowthSystem_Backend.Controllers
                     .Set("Frequency_of_measurement", plant.Frequency_of_measurement)
                     .Set("Frequency_of_upload", plant.Frequency_of_upload);
                 var result = plantCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject(plant));
             }
 
-            catch
+            catch (Exception e)
             {
-                return View();
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
@@ -146,9 +146,9 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return Content(JsonConvert.SerializeObject(size));
             }
 
-            catch
+            catch(Exception e)
             {
-                return null;
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
@@ -196,7 +196,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     interval = plant.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
                     PlantDetails plantDetails = new PlantDetails()
                     {
-                        Interavl = interval,
+                        Control_plan = interval,
                         Frequency_of_measurement = plant.Frequency_of_measurement,
                         Frequency_of_upload = plant.Frequency_of_upload
                     };

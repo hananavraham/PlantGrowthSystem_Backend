@@ -83,12 +83,12 @@ namespace PlantGrowthSystem_Backend.Controllers
                     .Set("Email", researcher.Email)
                     .Set("Degree", researcher.Degree);
                 var result = researcherCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject(researcher));
             }
 
-            catch
+            catch (Exception e)
             {
-                return null;
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
 
         }
@@ -100,12 +100,12 @@ namespace PlantGrowthSystem_Backend.Controllers
             try
             {
                 researcherCollection.InsertOne(researcher);
-                return View();
+                return Content(JsonConvert.SerializeObject(researcher));
             }
 
-            catch
+            catch (Exception e)
             {
-                return null;
+                return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
 
@@ -114,15 +114,25 @@ namespace PlantGrowthSystem_Backend.Controllers
         public ActionResult GetOwnerResearches(string id)
         {
             List<ResearchModel> researches = new List<ResearchModel>();
-            var owner = researcherCollection.AsQueryable<ResearcherModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
-            var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
 
-            foreach (string researchId in owner.Researches_Id)
+            try
             {
-                researches.Add(researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(researchId)));
+                var owner = researcherCollection.AsQueryable<ResearcherModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
+                var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
+
+                foreach (string researchId in owner.Researches_Id)
+                {
+                    researches.Add(researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(researchId)));
+                }
+
+                return Content(JsonConvert.SerializeObject(researches));
             }
 
-            return Content(JsonConvert.SerializeObject(researches));
+            catch
+            {
+                return null;
+            }
+
         }
 
     }

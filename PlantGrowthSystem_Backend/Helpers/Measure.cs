@@ -8,7 +8,7 @@ namespace PlantGrowthSystem_Backend.Helpers
     public class Measure
     {
         public float Temp { get; set; }
-        public float Light { get; set; }
+        public int Light { get; set; }
         public int Humidity { get; set; }
 
     }
