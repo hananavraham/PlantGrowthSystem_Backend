@@ -195,6 +195,7 @@
     <Compile Include="Helpers\Light.cs" />
     <Compile Include="Helpers\Measure.cs" />
     <Compile Include="Helpers\Measures.cs" />
+    <Compile Include="Helpers\PlantDetails.cs" />
     <Compile Include="Helpers\ReadExcelFile.cs" />
     <Compile Include="Helpers\Size.cs" />
     <Compile Include="Helpers\Temperature.cs" />

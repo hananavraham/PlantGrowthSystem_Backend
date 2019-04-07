@@ -22,6 +22,12 @@ namespace PlantGrowthSystem_Backend.Models
         [BsonElement("Growth_control_address")]
         public string Growth_control_address { get; set; }
 
+        [BsonElement("Frequency_of_measurement")]
+        public float Frequency_of_measurement { get; set; }
+
+        [BsonElement("Frequency_of_upload")]
+        public float Frequency_of_upload { get; set; }
+
         [BsonElement]
         public List<Intervals> Intervals { get; set; }
 

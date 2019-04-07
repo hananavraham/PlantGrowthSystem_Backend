@@ -88,7 +88,9 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var update = Builders<PlantModel>.Update
 
-                    .Set("Intervals", plant.Intervals);
+                    .Set("Intervals", plant.Intervals)
+                    .Set("Frequency_of_measurement", plant.Frequency_of_measurement)
+                    .Set("Frequency_of_upload", plant.Frequency_of_upload);
                 var result = plantCollection.UpdateOne(filter, update);
                 return View();
             }
@@ -192,8 +194,13 @@ namespace PlantGrowthSystem_Backend.Controllers
                 {
                     Intervals interval = new Intervals();
                     interval = plant.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
-
-                    return Content(JsonConvert.SerializeObject(interval));
+                    PlantDetails plantDetails = new PlantDetails()
+                    {
+                        Interavl = interval,
+                        Frequency_of_measurement = plant.Frequency_of_measurement,
+                        Frequency_of_upload = plant.Frequency_of_upload
+                    };
+                    return Content(JsonConvert.SerializeObject(plantDetails));
                 }
 
 
