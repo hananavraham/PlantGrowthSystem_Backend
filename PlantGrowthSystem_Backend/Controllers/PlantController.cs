@@ -87,8 +87,6 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var update = Builders<PlantModel>.Update
-
-                    .Set("Intervals", plant.Intervals)
                     .Set("Frequency_of_measurement", plant.Frequency_of_measurement)
                     .Set("Frequency_of_upload", plant.Frequency_of_upload);
                 var result = plantCollection.UpdateOne(filter, update);
@@ -100,6 +98,48 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return Content(JsonConvert.SerializeObject(e.Message));
             }
         }
+
+        //// GET : Plant/UpdateFrequencyOfMeasurement
+        //[HttpGet]
+        //public ActionResult UpdateFrequencyOfMeasurement(string plantId, float freq)
+        //{
+        //    try
+        //    {
+        //        var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+        //        var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => x.PlantId == plantId);
+        //        var filter = Builders<ControlPlanModel>.Filter.Eq("_id", controlPlan.Id);
+        //        var update = Builders<ControlPlanModel>.Update
+        //            .Set("Frequency_of_measurement", freq);
+        //        var result = controlPlanCollection.UpdateOne(filter, update);
+        //        return Content(JsonConvert.SerializeObject(controlPlan));
+        //    }
+
+        //    catch(Exception e)
+        //    {
+        //        return Content(JsonConvert.SerializeObject(e.Message));
+        //    }
+        //}
+
+        //// GET : Plant/UpdateFrequencyOfUpload
+        //[HttpGet]
+        //public ActionResult UpdateFrequencyOfUpload(string plantId, float freq)
+        //{
+        //    try
+        //    {
+        //        var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+        //        var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => x.PlantId == plantId);
+        //        var filter = Builders<ControlPlanModel>.Filter.Eq("_id", controlPlan.Id);
+        //        var update = Builders<ControlPlanModel>.Update
+        //            .Set("Frequency_of_upload", freq);
+        //        var result = controlPlanCollection.UpdateOne(filter, update);
+        //        return Content(JsonConvert.SerializeObject(controlPlan));
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        return Content(JsonConvert.SerializeObject(e.Message));
+        //    }
+        //}
 
         // POST : Plant/UpdateMeasure
         // UpdateMeasure from enviroment control unit
@@ -185,15 +225,14 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
 
-                /* checking the research status if still running */
-                var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
-                var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Plants_id.Contains(id));
+                var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+                var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => x.PlantId == id);
 
-
-                if (research.Status.Equals("Running"))
+                //checking the plant status if still running
+                if (plant.Status.Equals("Running"))
                 {
                     Intervals interval = new Intervals();
-                    interval = plant.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
+                    interval = controlPlan.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
                     PlantDetails plantDetails = new PlantDetails()
                     {
                         Control_plan = interval,
@@ -204,8 +243,8 @@ namespace PlantGrowthSystem_Backend.Controllers
                 }
 
 
-                // research status not "Running" - return "stop" 
-                else if(research.Status.Equals("Cancel") || research.Status.Equals("Stop") || research.Status.Equals("Finish"))
+                // plant status not "Running" - return "stop" 
+                else if(plant.Status.Equals("Cancel") || plant.Status.Equals("Stop") || plant.Status.Equals("Finish"))
                     return Content(JsonConvert.SerializeObject("stop"));
 
                 return null;

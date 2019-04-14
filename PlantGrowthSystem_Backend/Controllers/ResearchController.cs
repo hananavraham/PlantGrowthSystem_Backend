@@ -151,20 +151,23 @@ namespace PlantGrowthSystem_Backend.Controllers
         }
 
 
-        // POST : Research/StopOrContinueResearch
-        [HttpPost]
-        public ActionResult StopOrContinueResearch(ResearchModel research)
+        // GET : Research/StopOrContinueResearch
+        [HttpGet]
+        public ActionResult StopOrContinueResearch(string id, string status)
         {
             try
             {
-                var filter = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
+                var filter = Builders<ResearchModel>.Filter.Eq("_id", ObjectId.Parse(id));
                 var update = Builders<ResearchModel>.Update
-                    .Set("Status", research.Status);
+                    .Set("Status", status);
                 var result = researchCollection.UpdateOne(filter, update);
 
-                // need to check the status and update the Env. + Measure controls  //
-
-                return Content(JsonConvert.SerializeObject(research));
+                var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+                var filter1 = Builders<PlantModel>.Filter.Eq("ResearchId",id);
+                var update1 = Builders<PlantModel>.Update
+                    .Set("Status", status);
+                plantCollection.UpdateMany(filter1, update1);
+                return Content(JsonConvert.SerializeObject("Research status has been change"));
             }
 
             catch
@@ -181,19 +184,42 @@ namespace PlantGrowthSystem_Backend.Controllers
         {
             try
             {
+                bool IsAllPlantsRunning = false;
                 var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantIp);
                 var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(plant.ResearchId));
                 if (research.Status == "Pending")   // check if we have new Research
                 {
-                    // update Research status to Running
-                    var filter = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
-                    var update = Builders<ResearchModel>.Update
+                    // update Plant status to Running
+                    var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
+                    var update = Builders<PlantModel>.Update
                         .Set("Status", "Running");
-                    var result = researchCollection.UpdateOne(filter, update);
+                    var result = plantCollection.UpdateOne(filter, update);
 
-                    //return Content(JsonConvert.SerializeObject(plant));
-                    return Content(JsonConvert.SerializeObject("PlantId :"  + plant.Id));
+                    // checking if all plants is running
+                    foreach (string p in research.Plants_id)
+                    {
+                        plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantIp);
+                        if (plant.Status != "Running")
+                        {
+                            IsAllPlantsRunning = false;
+                            break;
+                        }
+
+                        else
+                            IsAllPlantsRunning = true;
+
+                    }
+
+                    // if all plants is running - change Research status to Running
+                    if(IsAllPlantsRunning)
+                    {
+                        var filter1 = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
+                        var update1 = Builders<ResearchModel>.Update
+                            .Set("Status", "Running");
+                        result = researchCollection.UpdateOne(filter1, update1);
+                    }
+                    return Content(JsonConvert.SerializeObject(plant.Id));
                 }
                 else
                     return null;
@@ -214,7 +240,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var update = Builders<ResearchModel>.Update
                     .Push("Plants", plantId);
                 var result = researchCollection.UpdateOne(filter, update);
-                return View();
+                return Content(JsonConvert.SerializeObject("Plant was added to Research succesfully"));
             }
 
             catch (Exception e)
@@ -228,7 +254,7 @@ namespace PlantGrowthSystem_Backend.Controllers
 
         /* need to check it!!!!!! */
 
-
+        // Update Control Plan to all Plants from Excel file
         // POST : Research/UpdateIntervalsToPlants
         [HttpPost]
         public ActionResult UpdateIntervalsToPlants(string researchId, HttpPostedFileBase file)
@@ -239,15 +265,18 @@ namespace PlantGrowthSystem_Backend.Controllers
             ListDictionary plantIntervals = excel.ParseExcel(file.FileName);
 
             var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+            var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
 
             foreach (KeyValuePair<string, List<Intervals>> plantInterval in plantIntervals)
             {
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantInterval.Key);
-                var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
-                var update = Builders<PlantModel>.Update
+                var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plant.Id);
 
-                    .Set("Intervals", plant.Intervals);
-                var result = plantCollection.UpdateOne(filter, update);
+                var filter = Builders<ControlPlanModel>.Filter.Eq("_id", controlPlan.Id);
+                var update = Builders<ControlPlanModel>.Update
+
+                    .Set("Intervals", controlPlan.Intervals);
+                var result = controlPlanCollection.UpdateOne(filter, update);
             }
 
             return null;

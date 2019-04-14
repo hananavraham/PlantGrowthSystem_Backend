@@ -16,6 +16,9 @@ namespace PlantGrowthSystem_Backend.Models
         [BsonElement("Research_id")]
         public string ResearchId { get; set; }
 
+        [BsonElement("Status")]
+        public string Status { get; set; }
+
         [BsonElement("Env_control_address")]
         public string Env_control_address { get; set; }
 
@@ -28,8 +31,8 @@ namespace PlantGrowthSystem_Backend.Models
         [BsonElement("Frequency_of_upload")]
         public float Frequency_of_upload { get; set; }
 
-        [BsonElement]
-        public List<Intervals> Intervals { get; set; }
+        //[BsonElement]
+        //public List<Intervals> Intervals { get; set; }
 
         //[BsonElement("Min_temperature")]
         //public List<Temperature> Min_temperature { get; set; }
