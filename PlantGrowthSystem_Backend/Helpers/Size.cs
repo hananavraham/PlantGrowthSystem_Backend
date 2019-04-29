@@ -7,7 +7,8 @@ namespace PlantGrowthSystem_Backend.Helpers
 {
     public class Size
     {
-        public float _Size { get; set; }
+        public float Height { get; set; }
+        public float Volume { get; set; }
         public string Date { get; set; }
     }
 }

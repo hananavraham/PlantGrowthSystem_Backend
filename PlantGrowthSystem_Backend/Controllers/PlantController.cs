@@ -6,6 +6,7 @@ using PlantGrowthSystem_Backend.Helpers;
 using PlantGrowthSystem_Backend.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -167,10 +168,10 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // GET : Plant/UpdateSize
+        // POST : Plant/UpdateSize
         // UpdateSize from measurement control unit
-        [HttpGet]
-        public ActionResult UpdateSize(string id, float size)
+        [HttpPost]
+        public ActionResult UpdateSize(string id, Size size)
         {
             try
             {
@@ -178,12 +179,13 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var filter  = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var update  = Builders<PlantModel>.Update.Push("Size", new Size
                 {
-                    _Size   = size,
+                    Height  = size.Height,
+                    Volume  = size.Volume,
                     Date = DateTime.Now.ToString("MM/dd/yyyy HH:mm")
                 }
                     );
                 var result  = plantCollection.UpdateOne(filter, update);
-                return Content(JsonConvert.SerializeObject(size));
+                return Content(JsonConvert.SerializeObject(plant));
             }
 
             catch(Exception e)
@@ -255,6 +257,14 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return Content(JsonConvert.SerializeObject(e.Message));
             }
 
+        }
+
+        // POST : Plant/CalculateImageSize
+        [HttpPost]
+        public ActionResult CalculateImageSize(StreamReader file)
+        {
+
+            return null;
         }
 
 

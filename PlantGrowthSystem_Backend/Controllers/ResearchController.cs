@@ -141,15 +141,35 @@ namespace PlantGrowthSystem_Backend.Controllers
 
         }
 
+
+        /* need to check this API  */ 
+
         // GET : Research/GetResearchesByOwner
         [HttpGet]
         public ActionResult GetResearchesByOwner(string ownerId)
         {
-            //var researches = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Owners == ObjectId.Parse(ownerId));
-            //return Content(JsonConvert.SerializeObject(researchs));
-            return View();
-        }
+            List<ResearchModel> re = researchCollection.AsQueryable<ResearchModel>().ToList();
+            List<ResearchModel> res = new List<ResearchModel>();
+            try
+            {
+                foreach (var r in re)
+                {
+                    var a = r.Owners.FindAll(x => x.Equals(ownerId));
+                    if (a.Count > 0)
+                        res.Add(r);
+                }
+                var researches = researchCollection.AsQueryable<ResearchModel>().SelectMany(x => x.Owners.Find(s => s.Equals(ownerId)));
+                //var researches1 = researchCollection.AsQueryable<ResearchModel>().SelectMany(x => x.Owners.FindAll(s => s.Equals(ownerId)));
+                return Content(JsonConvert.SerializeObject(researches));
+            }
 
+            catch(Exception e)
+            {
+                return Content(JsonConvert.SerializeObject(e.Message));
+            }
+
+        }
+        /* -------------------------------- */
 
         // GET : Research/StopOrContinueResearch
         [HttpGet]
@@ -240,6 +260,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var update = Builders<ResearchModel>.Update
                     .Push("Plants", plantId);
                 var result = researchCollection.UpdateOne(filter, update);
+
                 return Content(JsonConvert.SerializeObject("Plant was added to Research succesfully"));
             }
 
