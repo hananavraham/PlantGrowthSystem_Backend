@@ -56,8 +56,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : Researcher/GetResearcherByEmail
-        [HttpPost]
+        // Get : Researcher/GetResearcherByEmail
+        [HttpGet]
         public ActionResult GetResearcherByEmail(string email)
         {
             try

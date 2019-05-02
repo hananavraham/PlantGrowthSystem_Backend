@@ -158,9 +158,9 @@ namespace PlantGrowthSystem_Backend.Controllers
                     if (a.Count > 0)
                         res.Add(r);
                 }
-                var researches = researchCollection.AsQueryable<ResearchModel>().SelectMany(x => x.Owners.Find(s => s.Equals(ownerId)));
+                //var researches = researchCollection.AsQueryable<ResearchModel>().SelectMany(x => x.Owners.Find(s => s.Equals(ownerId)));
                 //var researches1 = researchCollection.AsQueryable<ResearchModel>().SelectMany(x => x.Owners.FindAll(s => s.Equals(ownerId)));
-                return Content(JsonConvert.SerializeObject(researches));
+                return Content(JsonConvert.SerializeObject(res));
             }
 
             catch(Exception e)
@@ -269,6 +269,29 @@ namespace PlantGrowthSystem_Backend.Controllers
                 return Content(JsonConvert.SerializeObject(e.Message));
             }
 
+        }
+
+        // GET : Research/GetResearchPlants
+        [HttpGet]
+        public ActionResult GetResearchPlants(string researchId)
+        {
+            List<PlantModel> plants = new List<PlantModel>();
+            try
+            {
+                var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(researchId));
+                var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+                foreach (string plantId in research.Plants_id)
+                {
+                    plants.Add(plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(plantId)));
+                }
+            }
+
+            catch
+            {
+                return null;
+            }
+
+            return Content(JsonConvert.SerializeObject(plants));
         }
 
 

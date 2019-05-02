@@ -183,6 +183,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\ControlPlanController.cs" />
+    <Compile Include="Controllers\GeneralPlantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PlantController.cs" />
     <Compile Include="Controllers\ResearchController.cs" />
@@ -262,6 +263,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\ControlPlan\" />
+    <Folder Include="Views\GeneralPlant\" />
     <Folder Include="Views\Plant\" />
     <Folder Include="Views\Researcher\" />
     <Folder Include="Views\Research\" />
