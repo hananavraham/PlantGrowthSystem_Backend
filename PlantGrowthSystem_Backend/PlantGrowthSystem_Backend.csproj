@@ -188,6 +188,7 @@
     <Compile Include="Controllers\PlantController.cs" />
     <Compile Include="Controllers\ResearchController.cs" />
     <Compile Include="Controllers\ResearcherController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -206,6 +207,7 @@
     <Compile Include="Models\PlantModel.cs" />
     <Compile Include="Models\ResearcherModel.cs" />
     <Compile Include="Models\ResearchModel.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +269,7 @@
     <Folder Include="Views\Plant\" />
     <Folder Include="Views\Researcher\" />
     <Folder Include="Views\Research\" />
+    <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
