@@ -6,9 +6,11 @@ using PlantGrowthSystem_Backend.Helpers;
 using PlantGrowthSystem_Backend.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Http.Cors;
 using System.Web.Mvc;
 
 namespace PlantGrowthSystem_Backend.Controllers
@@ -70,7 +72,7 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 plant.ResearchId = researchId;
                 plantCollection.InsertOne(plant);
-                return Content(JsonConvert.SerializeObject("ok"));
+                return Content(JsonConvert.SerializeObject(plant));
             }
 
             catch
@@ -265,6 +267,96 @@ namespace PlantGrowthSystem_Backend.Controllers
         {
 
             return null;
+        }
+
+        // POST : Plant/CreatePlantAndAddControlPlant
+        //[HttpPost]
+        //public ActionResult CreatePlantAndAddControlPlant(string researchId, HttpPostedFileBase file)
+        //{
+        //    ReadExcelFile excel = new ReadExcelFile();
+
+        //    string path = Server.MapPath("~/Content/" + file.FileName + DateTime.Now);
+        //    file.SaveAs(path);
+        //    List<FullPlant> plants = excel.ParseExcel(path);
+        //    var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
+        //    var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+        //    foreach(FullPlant plant in plants)
+        //    {
+        //        Create(researchId, new PlantModel {
+        //            Env_control_address = plant.Env_control_address,
+        //            Growth_control_address = plant.Growth_control_address,
+        //            Frequency_of_measurement = plant.Frequency_of_measurement,
+        //            Frequency_of_upload = plant.Frequency_of_upload,
+        //            Status = plant.Status
+        //        });
+
+
+        //        var plan = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plant.Env_control_address);
+        //        var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plan.Id);
+
+        //        // adding plant to research
+        //        try
+        //        {
+        //            var filter = Builders<ResearchModel>.Filter.Eq("_id", ObjectId.Parse(researchId));
+        //            var update = Builders<ResearchModel>.Update
+        //                .Push("Plants", plan.Id);
+        //            var result = researchCollection.UpdateOne(filter, update);
+        //        }
+
+        //        catch { }
+
+
+
+        //        controlPlanCollection.InsertOne(new ControlPlanModel
+        //        {
+        //            Frequency_of_measurement = plant.Frequency_of_measurement,
+        //            Frequency_of_upload = plant.Frequency_of_upload,
+        //            Intervals = plant.Intervals,
+        //            PlantId = plan.Id.ToString()
+        //        });
+        //    }
+
+        //    return Content(JsonConvert.SerializeObject("success"));
+        //}
+
+        // POST : Plant/createPlantAndAddControlPlan
+        [HttpPost]
+        public ActionResult createPlantAndAddControlPlan(string researchId, FullPlant plant)
+        {
+            try
+            {
+                var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
+                var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+                Create(researchId, new PlantModel
+                {
+                    Env_control_address = plant.Env_control_address,
+                    Growth_control_address = plant.Growth_control_address,
+                    Frequency_of_measurement = plant.Frequency_of_measurement,
+                    Frequency_of_upload = plant.Frequency_of_upload,
+                    Status = "Pending"
+                });
+
+                var plan = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plant.Env_control_address);
+                //var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plan.Id);
+                var filter = Builders<ResearchModel>.Filter.Eq("_id", ObjectId.Parse(researchId));
+                var update = Builders<ResearchModel>.Update
+                    .Push("Plants", plan.Id);
+                var result = researchCollection.UpdateOne(filter, update);
+
+                controlPlanCollection.InsertOne(new ControlPlanModel
+                {
+                    Frequency_of_measurement = plant.Frequency_of_measurement,
+                    Frequency_of_upload = plant.Frequency_of_upload,
+                    Intervals = plant.Intervals,
+                    PlantId = plan.Id.ToString()
+                });
+
+            }
+
+            catch { }
+
+            return Content(JsonConvert.SerializeObject("success"));
+
         }
 
     }

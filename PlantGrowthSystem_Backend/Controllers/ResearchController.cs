@@ -43,6 +43,7 @@ namespace PlantGrowthSystem_Backend.Controllers
         }
 
         //GET : Research/GetResearchById
+        [HttpGet]
         public ActionResult GetResearchById(string id)
         {
             try
@@ -66,7 +67,11 @@ namespace PlantGrowthSystem_Backend.Controllers
         {
             try
             {
-                //research.Status = "Pending";
+                if (research.Plants_id == null)
+                    research.Plants_id = new List<string>();
+                if (research.Owners == null)
+                    research.Owners = new List<string>();
+
                 researchCollection.InsertOne(research);
                 return Content(JsonConvert.SerializeObject(research));
             }
@@ -300,31 +305,31 @@ namespace PlantGrowthSystem_Backend.Controllers
 
         // Update Control Plan to all Plants from Excel file
         // POST : Research/UpdateIntervalsToPlants
-        [HttpPost]
-        public ActionResult UpdateIntervalsToPlants(string researchId, HttpPostedFileBase file)
-        {
-            ReadExcelFile excel = new ReadExcelFile();
+        //[HttpPost]
+        //public ActionResult UpdateIntervalsToPlants(string researchId, HttpPostedFileBase file)
+        //{
+        //    ReadExcelFile excel = new ReadExcelFile();
 
-            /* need to get the file from POST */
-            ListDictionary plantIntervals = excel.ParseExcel(file.FileName);
+        //    /* need to get the file from POST */
+        //    ListDictionary plantIntervals = excel.ParseExcel(file.FileName);
 
-            var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
-            var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+        //    var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+        //    var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
 
-            foreach (KeyValuePair<string, List<Intervals>> plantInterval in plantIntervals)
-            {
-                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantInterval.Key);
-                var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plant.Id);
+        //    foreach (KeyValuePair<string, List<Intervals>> plantInterval in plantIntervals)
+        //    {
+        //        var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantInterval.Key);
+        //        var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plant.Id);
 
-                var filter = Builders<ControlPlanModel>.Filter.Eq("_id", controlPlan.Id);
-                var update = Builders<ControlPlanModel>.Update
+        //        var filter = Builders<ControlPlanModel>.Filter.Eq("_id", controlPlan.Id);
+        //        var update = Builders<ControlPlanModel>.Update
 
-                    .Set("Intervals", controlPlan.Intervals);
-                var result = controlPlanCollection.UpdateOne(filter, update);
-            }
+        //            .Set("Intervals", controlPlan.Intervals);
+        //        var result = controlPlanCollection.UpdateOne(filter, update);
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
     }
 }

@@ -26,31 +26,10 @@ namespace PlantGrowthSystem_Backend.Models
         public string Growth_control_address { get; set; }
 
         [BsonElement("Frequency_of_measurement")]
-        public float Frequency_of_measurement { get; set; }
+        public float Frequency_of_measurement { get; set; }  // in Hours
 
         [BsonElement("Frequency_of_upload")]
-        public float Frequency_of_upload { get; set; }
-
-        //[BsonElement]
-        //public List<Intervals> Intervals { get; set; }
-
-        //[BsonElement("Min_temperature")]
-        //public List<Temperature> Min_temperature { get; set; }
-
-        //[BsonElement("Max_temperature")]
-        //public List<Temperature> Max_temperature { get; set; }
-
-        //[BsonElement("Min_light")]
-        //public List<Light> Min_light { get; set; }
-
-        //[BsonElement("Max_light")]
-        //public List<Light> Max_light { get; set; }
-
-        //[BsonElement("Min_humidity")]
-        //public List<Humidity> Min_humidity { get; set; }
-
-        //[BsonElement("Max_humidity")]
-        //public List<Humidity> Max_humidity { get; set; }
+        public float Frequency_of_upload { get; set; }    // in Hours
 
         [BsonElement("Temperature")]
         public List<Temperature> Temperature { get; set; }
