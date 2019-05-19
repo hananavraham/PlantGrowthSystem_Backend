@@ -229,26 +229,55 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
 
-                var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
-                var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => x.PlantId == id);
+                var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
+                var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(plant.ResearchId));
 
-                //checking the plant status if still running
-                if (plant.Status.Equals("Running"))
+                if (research.Status.Equals("Running"))
                 {
-                    Intervals interval = new Intervals();
-                    interval = controlPlan.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
-                    PlantDetails plantDetails = new PlantDetails()
+                    DateTime end_date = Convert.ToDateTime(research.End_date);
+                    DateTime now = Convert.ToDateTime(date);
+
+                    //checking if we rich the end_date 
+                    if(end_date.CompareTo(now) == -1)
                     {
-                        Control_plan = interval,
-                        Frequency_of_measurement = plant.Frequency_of_measurement,
-                        Frequency_of_upload = plant.Frequency_of_upload
-                    };
-                    return Content(JsonConvert.SerializeObject(plantDetails));
+                        // update research status to "complete"
+                        var filter = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
+                        var update = Builders<ResearchModel>.Update
+                            .Set("Status", "Complete");
+                        var result = researchCollection.UpdateOne(filter, update);
+
+                        var filter1 = Builders<PlantModel>.Filter.Eq("ResearchId", research.Id);
+                        var update1 = Builders<PlantModel>.Update
+                            .Set("Status", "Complete");
+                        plantCollection.UpdateMany(filter1, update1);
+
+                        return Content(JsonConvert.SerializeObject("stop"));
+                    }
+
+                    else
+                    {
+                        var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
+                        var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => x.PlantId == id);
+
+                        //checking the plant status if still running
+                        if (plant.Status.Equals("Running"))
+                        {
+                            Intervals interval = new Intervals();
+                            interval = controlPlan.Intervals.AsQueryable<Intervals>().SingleOrDefault(x => x.date == date);
+                            PlantDetails plantDetails = new PlantDetails()
+                            {
+                                Control_plan = interval,
+                                Frequency_of_measurement = plant.Frequency_of_measurement,
+                                Frequency_of_upload = plant.Frequency_of_upload
+                            };
+                            return Content(JsonConvert.SerializeObject(plantDetails));
+                        }
+                    }
+
                 }
 
-
                 // plant status not "Running" - return "stop" 
-                else if(plant.Status.Equals("Cancel") || plant.Status.Equals("Stop") || plant.Status.Equals("Finish"))
+                else if(plant.Status.Equals("Cancel") || plant.Status.Equals("Stop") || plant.Status.Equals("Complete"))
                     return Content(JsonConvert.SerializeObject("stop"));
 
                 return null;
@@ -340,7 +369,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                 //var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plan.Id);
                 var filter = Builders<ResearchModel>.Filter.Eq("_id", ObjectId.Parse(researchId));
                 var update = Builders<ResearchModel>.Update
-                    .Push("Plants", plan.Id);
+                    .Push("Plants", plan.Id.ToString());
                 var result = researchCollection.UpdateOne(filter, update);
 
                 controlPlanCollection.InsertOne(new ControlPlanModel

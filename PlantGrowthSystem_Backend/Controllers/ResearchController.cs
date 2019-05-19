@@ -266,7 +266,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     .Push("Plants", plantId);
                 var result = researchCollection.UpdateOne(filter, update);
 
-                return Content(JsonConvert.SerializeObject("Plant was added to Research succesfully"));
+                return Content(JsonConvert.SerializeObject("Plant was succesfully added to Research"));
             }
 
             catch (Exception e)
