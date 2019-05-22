@@ -7,7 +7,10 @@ namespace PlantGrowthSystem_Backend.Helpers
 {
     public class Measure
     {
-        public float Temp { get; set; }
+        //public float Temp { get; set; }
+
+        public Double WaterwaterAmount { get; set; }
+        public Double PowerConsumption { get; set; }
         public int Light { get; set; }
         public int Humidity { get; set; }
 

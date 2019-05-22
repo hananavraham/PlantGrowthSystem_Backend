@@ -31,9 +31,14 @@ namespace PlantGrowthSystem_Backend.Models
         [BsonElement("Frequency_of_upload")]
         public float Frequency_of_upload { get; set; }    // in Hours
 
-        [BsonElement("Temperature")]
-        public List<Temperature> Temperature { get; set; }
+        //[BsonElement("Temperature")]
+        //public List<Temperature> Temperature { get; set; }
+        [BsonElement("PowerConsumption")]
+        public List<PowerConsumption> PowerConsumption { get; set; }
 
+        [BsonElement("WaterAmount")]
+        public List<WaterAmount> WaterAmount { get; set; }
+ 
         [BsonElement("Light")]
         public List<Light> Light { get; set; }
 

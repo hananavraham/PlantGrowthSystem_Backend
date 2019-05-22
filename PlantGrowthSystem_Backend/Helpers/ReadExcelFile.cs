@@ -55,8 +55,8 @@ namespace PlantGrowthSystem_Backend.Helpers
                         interval.date = DateTime.FromOADate(Convert.ToDouble(xlRange.Cells[i, 1].Value2)).ToString("MM/dd/yyyy");
                         interval.min_Humidity = Int32.Parse(xlRange.Cells[i, 2].Value2.ToString());
                         interval.max_Humidity = Int32.Parse(xlRange.Cells[i, 3].Value2.ToString());
-                        interval.min_Temperature = Int32.Parse(xlRange.Cells[i, 4].Value2.ToString());
-                        interval.max_Temperature = Int32.Parse(xlRange.Cells[i, 5].Value2.ToString());
+                        //interval.min_Temperature = Int32.Parse(xlRange.Cells[i, 4].Value2.ToString());
+                        //interval.max_Temperature = Int32.Parse(xlRange.Cells[i, 5].Value2.ToString());
                         interval.light_Per_Day = Int32.Parse(xlRange.Cells[i, 6].Value2.ToString());
                         //interval.min_Light = Int32.Parse(xlRange.Cells[i, 6].Value2.ToString());
                         //interval.max_Light = Int32.Parse(xlRange.Cells[i, 7].Value2.ToString());

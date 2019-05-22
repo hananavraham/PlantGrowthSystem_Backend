@@ -156,10 +156,12 @@ namespace PlantGrowthSystem_Backend.Controllers
 
                 var filter  = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
                 var builder = Builders<PlantModel>.Update;
-                var update  = builder
-                    .Push("Temperature", new Temperature(measure.Temp, date))
+                var update = builder
+                    //.Push("Temperature", new Temperature(measure.Temp, date))
                     .Push("Light", new Light(measure.Light, date))
-                    .Push("Humidity", new Humidity(measure.Humidity, date));
+                    .Push("Humidity", new Humidity(measure.Humidity, date))
+                    .Push("WaterAmount", new WaterAmount(measure.WaterwaterAmount, date))
+                    .Push("PowerConsumption", new PowerConsumption(measure.PowerConsumption, date));
                 var result  = plantCollection.UpdateOne(filter, update);
                 return Content(JsonConvert.SerializeObject(measure));
             }
@@ -206,9 +208,11 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 var plant        = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
                 var measure      = new Measures();
-                measure.Temp     = plant.Temperature.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
+                //measure.Temp     = plant.Temperature.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
                 measure.Light    = plant.Light.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
                 measure.Humidity = plant.Humidity.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
+                measure.Water = plant.WaterAmount.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
+                measure.Power = plant.PowerConsumption.FindAll(d => DateTime.Parse(d.Date) >= start_date && DateTime.Parse(d.Date) <= end_date);
 
                 return Content(JsonConvert.SerializeObject(measure));
             }
