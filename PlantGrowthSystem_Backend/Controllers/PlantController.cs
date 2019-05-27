@@ -160,7 +160,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     //.Push("Temperature", new Temperature(measure.Temp, date))
                     .Push("Light", new Light(measure.Light, date))
                     .Push("Humidity", new Humidity(measure.Humidity, date))
-                    .Push("WaterAmount", new WaterAmount(measure.WaterwaterAmount, date))
+                    .Push("WaterAmount", new WaterAmount(measure.WaterAmount, date))
                     .Push("PowerConsumption", new PowerConsumption(measure.PowerConsumption, date));
                 var result  = plantCollection.UpdateOne(filter, update);
                 return Content(JsonConvert.SerializeObject(measure));
@@ -228,7 +228,8 @@ namespace PlantGrowthSystem_Backend.Controllers
         [HttpGet]
         public ActionResult GetIntervalsByDate(string id)
         {
-            string date = DateTime.Now.ToString("MM/dd/yyyy");
+            string date = DateTime.Now.ToString("M/dd/yyyy");
+
             try
             {
                 var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
@@ -366,7 +367,12 @@ namespace PlantGrowthSystem_Backend.Controllers
                     Growth_control_address = plant.Growth_control_address,
                     Frequency_of_measurement = plant.Frequency_of_measurement,
                     Frequency_of_upload = plant.Frequency_of_upload,
-                    Status = "Pending"
+                    Status = "Pending",
+                    Humidity = new List<Humidity>(),
+                    Plant_size = new List<Size>(),
+                    Light = new List<Light>(),
+                    PowerConsumption = new List<PowerConsumption>(),
+                    WaterAmount = new List<WaterAmount>()
                 });
 
                 var plan = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plant.Env_control_address);

@@ -107,6 +107,7 @@ namespace PlantGrowthSystem_Backend.Controllers
         [HttpGet]
         public ActionResult Delete(string id)
         {
+            var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
             try
             {
                 var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(id));
@@ -114,7 +115,14 @@ namespace PlantGrowthSystem_Backend.Controllers
                 //deleting all the plants belnogs to the research
                 var plantCollection = dBContext.database.GetCollection<ResearchModel>("Plant");
                 foreach (var plantId in research.Plants_id)
+                {
+                    // delete plant's control plan
+                    controlPlanCollection.DeleteOne(x => x.PlantId == plantId);
+
+                    // delete research's plant
                     plantCollection.DeleteOne(x => x.Id == ObjectId.Parse(plantId));
+
+                }
                 return Content(JsonConvert.SerializeObject("Research deleted"));
             }
 
@@ -211,7 +219,7 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 bool IsAllPlantsRunning = false;
                 var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
-                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantIp);
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantIp && x.Status == "Pending");
                 var research = researchCollection.AsQueryable<ResearchModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(plant.ResearchId));
                 if (research.Status == "Pending")   // check if we have new Research
                 {
@@ -224,7 +232,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     // checking if all plants is running
                     foreach (string p in research.Plants_id)
                     {
-                        plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plantIp);
+                        plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(p));
                         if (plant.Status != "Running")
                         {
                             IsAllPlantsRunning = false;
@@ -237,7 +245,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     }
 
                     // if all plants is running - change Research status to Running
-                    if(IsAllPlantsRunning)
+                    if (IsAllPlantsRunning)
                     {
                         var filter1 = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
                         var update1 = Builders<ResearchModel>.Update
@@ -253,6 +261,24 @@ namespace PlantGrowthSystem_Backend.Controllers
             {
                 return null;
             }
+        }
+
+        // GET : Research/GetNewResearchByGrowthControlUnitIP
+        [HttpGet]
+        public ActionResult GetNewResearchByMeasureControlUnit(string ip)
+        {
+            try
+            {
+                var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Growth_control_address == ip);
+                return Content(JsonConvert.SerializeObject(plant.Id));
+            }
+
+            catch
+            {
+                return null;
+            }
+
         }
 
         // GET : Research/AddPlantToResearch

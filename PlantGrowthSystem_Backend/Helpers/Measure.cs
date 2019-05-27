@@ -9,7 +9,7 @@ namespace PlantGrowthSystem_Backend.Helpers
     {
         //public float Temp { get; set; }
 
-        public Double WaterwaterAmount { get; set; }
+        public Double WaterAmount { get; set; }
         public Double PowerConsumption { get; set; }
         public int Light { get; set; }
         public int Humidity { get; set; }
