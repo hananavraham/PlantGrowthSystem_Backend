@@ -359,6 +359,22 @@ namespace PlantGrowthSystem_Backend.Controllers
         {
             try
             {
+                // checking if already plant with the same IP exsist and Running or Pending
+                var plan = plantCollection.AsQueryable<PlantModel>().First(x => x.Env_control_address == plant.Env_control_address && x.Status == "Pending" ||
+                    x.Env_control_address == plant.Env_control_address && x.Status == "Running");
+
+                if (plan != null)
+                {
+                    // return error - will not create another plant
+                    return Content(JsonConvert.SerializeObject(
+                            "ip already exsist and running or pending"
+                        ));
+                }
+            }
+
+            catch { }
+            try
+            {
                 var researchCollection = dBContext.database.GetCollection<ResearchModel>("Research");
                 var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
                 Create(researchId, new PlantModel
@@ -375,7 +391,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                     WaterAmount = new List<WaterAmount>()
                 });
 
-                var plan = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plant.Env_control_address);
+                var plan = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Env_control_address == plant.Env_control_address && x.Status == "Pending");
                 //var controlPlan = controlPlanCollection.AsQueryable<ControlPlanModel>().SingleOrDefault(x => ObjectId.Parse(x.PlantId) == plan.Id);
                 var filter = Builders<ResearchModel>.Filter.Eq("_id", ObjectId.Parse(researchId));
                 var update = Builders<ResearchModel>.Update
@@ -395,8 +411,6 @@ namespace PlantGrowthSystem_Backend.Controllers
             catch { }
 
             return Content(JsonConvert.SerializeObject("success"));
-
         }
-
     }
 }
