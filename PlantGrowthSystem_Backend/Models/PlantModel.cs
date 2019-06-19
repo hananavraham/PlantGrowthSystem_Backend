@@ -16,6 +16,9 @@ namespace PlantGrowthSystem_Backend.Models
         [BsonElement("Research_id")]
         public string ResearchId { get; set; }
 
+        [BsonElement("Plant_Name")]
+        public string Plant_Name { get; set; }
+
         [BsonElement("Status")]
         public string Status { get; set; }
 

@@ -379,6 +379,7 @@ namespace PlantGrowthSystem_Backend.Controllers
                 var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");
                 Create(researchId, new PlantModel
                 {
+                    Plant_Name = plant.Plant_Name,
                     Env_control_address = plant.Env_control_address,
                     Growth_control_address = plant.Growth_control_address,
                     Frequency_of_measurement = plant.Frequency_of_measurement,

@@ -265,13 +265,13 @@ namespace PlantGrowthSystem_Backend.Controllers
 
         // GET : Research/GetNewResearchByGrowthControlUnitIP
         [HttpGet]
-        public ActionResult GetNewResearchByMeasureControlUnit(string ip)
+        public string GetNewResearchByGrowthControlUnitIP(string ip)
         {
             try
             {
                 var plantCollection = dBContext.database.GetCollection<PlantModel>("Plant");
-                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Growth_control_address == ip);
-                return Content(JsonConvert.SerializeObject(plant.Id));
+                var plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Growth_control_address == ip && x.Status == "Pending" || x.Growth_control_address == ip && x.Status == "Running");
+                return plant.Id.ToString();
             }
 
             catch

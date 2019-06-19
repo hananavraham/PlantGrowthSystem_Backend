@@ -194,5 +194,27 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
+        // POST : ControlPlan/UpdateControlPlan
+        [HttpPost]
+        public ActionResult UpdateControlPlan(string plantId, List<Intervals> intervals)
+        {
+            try
+            {
+                var filter = Builders<ControlPlanModel>.Filter.Eq("PlantId", plantId);
+                var update = Builders<ControlPlanModel>.Update
+                    .Set("Intervals", intervals);
+                var result = controlPlanCollection.UpdateOne(filter, update);
+
+                return Content(JsonConvert.SerializeObject(result));
+            }
+
+            catch(Exception e)
+            {
+                return Content(JsonConvert.SerializeObject(e.Message));
+            }
+
+
+        }
+
     }
 }
