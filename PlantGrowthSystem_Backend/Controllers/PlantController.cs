@@ -413,5 +413,54 @@ namespace PlantGrowthSystem_Backend.Controllers
 
             return Content(JsonConvert.SerializeObject("success"));
         }
+
+        // Get : Plant/plantPreTest
+        [HttpGet]
+        public string plantPreTest(string plantId, string status)
+        {
+            try
+            {
+                var filter = Builders<PlantModel>.Filter.Eq("_id", ObjectId.Parse(plantId));
+                if (status == "Ok") 
+                {
+                    var update = Builders<PlantModel>.Update
+                        .Set("Status", "Running");
+                    var result = plantCollection.UpdateOne(filter, update);
+                }
+
+                else if(status == "Error")
+                {
+
+                }
+
+                return "ok";
+            }
+            catch(Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        // Get : Plant/UpdateStatus
+        [HttpGet]
+        public string UpdateStatus(string plantId, string status)
+        {
+            try
+            {
+                var filter = Builders<PlantModel>.Filter.Eq("_id", ObjectId.Parse(plantId));
+                var update = Builders<PlantModel>.Update
+                    .Set("Status", status);
+                var result = plantCollection.UpdateOne(filter, update);
+
+
+                return result.ToString();
+            }
+
+            catch(Exception e)
+            {
+                return e.Message;
+            }
+
+        }
     }
 }

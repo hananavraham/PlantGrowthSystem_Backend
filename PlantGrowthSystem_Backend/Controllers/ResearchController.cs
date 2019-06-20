@@ -213,7 +213,7 @@ namespace PlantGrowthSystem_Backend.Controllers
         // return plant Model to env. control ip
         // GET : Research/GetNewResearchByIp
         [HttpGet]
-        public ActionResult GetNewResearchByIp(string plantIp)
+        public string GetNewResearchByIp(string plantIp, string envStatus)
         {
             try
             {
@@ -225,15 +225,18 @@ namespace PlantGrowthSystem_Backend.Controllers
                 {
                     // update Plant status to Running
                     var filter = Builders<PlantModel>.Filter.Eq("_id", plant.Id);
-                    var update = Builders<PlantModel>.Update
-                        .Set("Status", "Running");
-                    var result = plantCollection.UpdateOne(filter, update);
+                    if(envStatus == "Ok" || envStatus == "Error")
+                    {
+                        var update = Builders<PlantModel>.Update
+                            .Set("Status", envStatus);
+                        var result = plantCollection.UpdateOne(filter, update);
+                    }
 
                     // checking if all plants is running
                     foreach (string p in research.Plants_id)
                     {
                         plant = plantCollection.AsQueryable<PlantModel>().SingleOrDefault(x => x.Id == ObjectId.Parse(p));
-                        if (plant.Status != "Running")
+                        if (plant.Status == "Pending")
                         {
                             IsAllPlantsRunning = false;
                             break;
@@ -250,9 +253,10 @@ namespace PlantGrowthSystem_Backend.Controllers
                         var filter1 = Builders<ResearchModel>.Filter.Eq("_id", research.Id);
                         var update1 = Builders<ResearchModel>.Update
                             .Set("Status", "Running");
-                        result = researchCollection.UpdateOne(filter1, update1);
+                        var result = researchCollection.UpdateOne(filter1, update1);
                     }
-                    return Content(JsonConvert.SerializeObject(plant.Id));
+                    //return Content(JsonConvert.SerializeObject(plant.Id));
+                    return plant.Id.ToString();
                 }
                 else
                     return null;
