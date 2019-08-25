@@ -73,8 +73,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : Researcher/Edit
-        [HttpPost]
+        // PUT : Researcher/Edit
+        [HttpPut]
         public ActionResult Edit(ResearcherModel researcher)
         {
             try

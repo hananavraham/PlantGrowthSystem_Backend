@@ -71,8 +71,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : GeneralPlant/Edit
-        [HttpPost]
+        // PUT : GeneralPlant/Edit
+        [HttpPut]
         public ActionResult Edit(GeneralPlantModel generalPlant)
         {
             try

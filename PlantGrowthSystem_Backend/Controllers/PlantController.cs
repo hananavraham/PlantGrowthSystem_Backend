@@ -81,9 +81,9 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : Plant/Edit
+        // PUT : Plant/Edit
         // Edit from Client side
-        [HttpPost]
+        [HttpPut]
         public ActionResult Edit(PlantModel plant)
         {
             try
@@ -144,9 +144,9 @@ namespace PlantGrowthSystem_Backend.Controllers
         //    }
         //}
 
-        // POST : Plant/UpdateMeasure
+        // PUT : Plant/UpdateMeasure
         // UpdateMeasure from enviroment control unit
-        [HttpPost]
+        [HttpPut]
         public ActionResult UpdateMeasure(string id, Measure measure)
         {
             try
@@ -172,9 +172,9 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : Plant/UpdateSize
+        // PUT : Plant/UpdateSize
         // UpdateSize from measurement control unit
-        [HttpPost]
+        [HttpPut]
         public ActionResult UpdateSize(string id, Size size)
         {
             try

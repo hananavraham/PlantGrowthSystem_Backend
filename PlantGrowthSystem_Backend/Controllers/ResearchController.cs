@@ -82,8 +82,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : Research/Edit
-        [HttpPost]
+        // PUT : Research/Edit
+        [HttpPut]
         public ActionResult Edit(ResearchModel research)
         {
             try
@@ -103,8 +103,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // GET : Research/Delete
-        [HttpGet]
+        // DELETE : Research/Delete
+        [HttpDelete]
         public ActionResult Delete(string id)
         {
             var controlPlanCollection = dBContext.database.GetCollection<ControlPlanModel>("ControlPlan");

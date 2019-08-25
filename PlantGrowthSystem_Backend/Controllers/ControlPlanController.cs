@@ -91,8 +91,8 @@ namespace PlantGrowthSystem_Backend.Controllers
             }
         }
 
-        // POST : ControlPlan/Edit
-        [HttpPost]
+        // PUT : ControlPlan/Edit
+        [HttpPut]
         public ActionResult Edit(ControlPlanModel controlPlan)
         {
             try
@@ -172,6 +172,7 @@ namespace PlantGrowthSystem_Backend.Controllers
         }
 
         // GET : ControlPlan/GetControlPlanIntervalByPlantId
+        [HttpGet]
         public ActionResult GetControlPlanIntervalByPlantId(string plantId)
         {
             string date = DateTime.Now.ToString("MM/dd/yyyy");
@@ -195,7 +196,7 @@ namespace PlantGrowthSystem_Backend.Controllers
         }
 
         // POST : ControlPlan/UpdateControlPlan
-        [HttpPost]
+        [HttpPut]
         public ActionResult UpdateControlPlan(string plantId, List<Intervals> intervals)
         {
             try
